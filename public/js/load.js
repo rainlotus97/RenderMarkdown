@@ -1,5 +1,5 @@
 // 用于解析Markdown文档
-function fillMarkdownContent(filename) {
+function fillMarkdownContent(filename, online = false) {
   var xmlhttp;
   marked.setOptions({
     renderer: new marked.Renderer(),
@@ -48,7 +48,11 @@ function fillMarkdownContent(filename) {
     }
   };
   // 向服务器发送请求，获取你需要的Markdown文档
-  xmlhttp.open("GET", "public/md/" + filename + ".md", true);
+  if (online) {
+    xmlhttp.open("GET", filename, true);
+  } else {
+    xmlhttp.open("GET", "public/md/" + filename + ".md", true);
+  }
   xmlhttp.send();
 }
 
