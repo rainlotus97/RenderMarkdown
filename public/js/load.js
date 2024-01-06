@@ -157,7 +157,7 @@ function fetchOnlineMdFile(readmeUrl) {
           const decodedContent = new TextDecoder("utf-8").decode(
             base64ToArrayBuffer(data.content)
           );
-          console.log(decodedContent);
+          console.log('decodedContent length:', decodedContent.length);
           resolve(decodedContent);
         } else {
           resolve(data);
