@@ -1,10 +1,9 @@
 /**
  * 初始化服务
  * @param {string} filenameOrUrl
- * @param {boolean} isOnline
- * @description isOnline 为true时，filenameOrUrl为url，为false时，filenameOrUrl为文件名
+ * @description filenameOrUrl为md文件名或者md文件的url
  */
-function initService(filenameOrUrl, isOnline = false) {
+function initService(filenameOrUrl) {
   // 设置marked
   marked.setOptions({
     renderer: new marked.Renderer(),
@@ -22,6 +21,7 @@ function initService(filenameOrUrl, isOnline = false) {
     smartypants: true,
     xhtml: false,
   });
+  let isOnline = filenameOrUrl.includes("http") ? true : false;
   if (isOnline) {
     fillMarkdownContentByOnlineFile(filenameOrUrl);
   } else {
@@ -38,6 +38,7 @@ function fillMarkdownContentByOnlineFile(readmeUrl) {
   // 本地文件需要拼接路径
   fetchOnlineMdFile(readmeUrl)
     .then((data) => {
+      console.log('fetchOnlineMdFile data length:', data.length);
       initMarkedService(data);
     })
     .catch((error) => {
