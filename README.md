@@ -9,51 +9,11 @@
 - 读取本地md文档（读取在线md需要自行解决跨域问题）——涉及marked解析
 - code代码高亮——highlight处理样式
 
-## 二、样式展示
-
-### 2.1 表格
-
-| 名称 | 必选 | 描述 |
-| ---- | ---- | ---- |
-| name | M    | 名称 |
-| age  | O    | 年龄 |
-| sex  | M    | 性别 |
-
-### 2.2 代码块
-
-```javascript
-function initObesrver() {
-  let imgs = document.querySelectorAll("img");
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          // 元素进入视口
-          let hasLaySrc = entry.target.getAttribute("data-has-lazy-src");
-          if (hasLaySrc === "false") {
-            entry.target.src = entry.target.getAttribute("data-src");
-            entry.target.removeAttribute("data-src");
-            entry.target.setAttribute("data-has-lazy-src", true);
-            console.log(entry.target);
-          }
-        }
-      });
-    },
-    { threshold: 1 }
-  );
-  if (imgs.length > 0) {
-    imgs.forEach((img) => {
-      observer.observe(img);
-    });
-  }
-}
-```
-
-## 三、在线md加载调试
+## 二、在线md加载调试
 
 该项目默认加载本地/public/md/OnlineMarkdown.md文件，不过项目之中也设置了初始化服务initService,只需要打开控制台调用该函数即可。
 
-### 3.1 initService结构
+### 2.1 initService结构
 
 ```javascript
 /**
@@ -76,19 +36,19 @@ function initService(filenameOrUrl) {
 }
 ```
 
-### 3.2 控制台调试
+### 2.2 控制台调试
 
-#### 3.2.1 在线地址
+#### 2.2.1 在线地址
 
 <img src="assets/image-20240106213146511.png" alt="image-20240106213146511" style="zoom:50%;" />
 
-#### 3.2.2 本地地址
+#### 2.2.2 本地地址
 
 <img src="assets/image-20240106213418696.png" alt="image-20240106213418696" style="zoom:50%;" />
 
-## 四、优化加载速度
+## 三、优化加载速度
 
-### 4.1 图片懒加载
+### 3.1 图片懒加载
 
 图片懒加载是通过IntersectionObserver方法实现的，本质原理便是判断当前元素是否在可视化窗口内，从而触发加载操作。
 
@@ -148,7 +108,7 @@ function initObesrver() {
 
 上面使用的是非常粗暴的方法，处理懒加载图片时，应该对img图片做一些兜底样式加载状态，等实际渲染好了再替换url实现切换，在此不多做展开。
 
-### 4.2 CDN加速
+### 3.2 CDN加速
 
 在实际开发中，会面临包体过大，一个项目中的main.js在gzip压缩下，依旧有几兆的大小。这个时候可以考虑是否是三方库依赖的过多导致整体包过大的原因，若是这方面的话，便可以考虑CDN方式来引入一部分三方库，减少main.js包体自身大小，达到提速的目的。
 
@@ -156,7 +116,7 @@ function initObesrver() {
 
 总而言之，**分包**解决main.js的加载压力和**优质的CDN加速服务**是可以很好的优化加载速度的。
 
-### 4.3 其他
+### 3.3 其他
 
 除了上述两种常见方法，针对列表还有**虚拟滚动**和**分页加载**来处理大列表的滑动和加载压力。
 
