@@ -15,11 +15,24 @@
     <script type="text/javascript" src="./public/js/load.js"></script>
 
     <script>
-        console.log('github公共文件地址格式为：  "https://api.github.com/repos/用户名/仓库名/contents/文件名.后缀名"');
         initService('OnlineMarkdown');
-        window.scrollTo(0, 0);
     </script>
 
+    <script>
+        console.log('github公共文件地址格式为：  "https://api.github.com/repos/用户名/仓库名/contents/文件名.后缀名"');
+        console.log('调用在线md文件的方法：testGithubLoadService()');
+        console.log('调用本地md文件的方法：testLocalLoadService()');
+        console.log('亦可以使用initService(filenameOrUrl)方法，传入文件名或者url，来调用服务');
+        // 测试案例
+       const readmeUrl = 'https://api.github.com/repos/rainlotus97/RenderMarkdown/contents/README.md';
+       const testGithubLoadService=()=>{
+            initService(readmeUrl);
+       }
+
+       const testLocalLoadService=()=>{
+            initService('TestPublic');
+       }
+    </script>
 </head>
 
 <body>
