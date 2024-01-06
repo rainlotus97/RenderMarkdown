@@ -1,6 +1,11 @@
-// 用于解析Markdown文档
-function fillMarkdownContent(filename, online = false) {
-  var xmlhttp;
+/**
+ * 初始化服务
+ * @param {string} filenameOrUrl
+ * @param {boolean} isOnline 
+ * @description isOnline 为true时，filenameOrUrl为url，为false时，filenameOrUrl为文件名
+ */
+function initService(filenameOrUrl, isOnline=false) {
+  // 设置marked
   marked.setOptions({
     renderer: new marked.Renderer(),
     highlight: function (code, language) {
@@ -17,17 +22,24 @@ function fillMarkdownContent(filename, online = false) {
     smartypants: true,
     xhtml: false,
   });
-  if (window.XMLHttpRequest) {
-    // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
-    xmlhttp = new XMLHttpRequest();
-  } else {
-    // IE6, IE5 浏览器执行代码
-    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-  }
-  // 得到服务器响应后，对得到的Markdown文档进行解析
-  xmlhttp.onreadystatechange = function () {
-    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-      const markdownContent = xmlhttp.responseText;
+  this.fillMarkdownContentByOnlineFile(filenameOrUrl, isOnline);
+}
+
+/**
+ * 通过在线文件填充markdown内容
+ * @param {string} filenameOrUrl
+ * @param {boolean} isOnline
+ * @description 针对md作者信息单独处理，md作者信息需要放在md文件的头部，以---开头，以---结尾
+ */
+function fillMarkdownContentByOnlineFile(filenameOrUrl, isOnline) {
+  // 本地文件需要拼接路径
+  let readmeUrl = isOnline
+    ? filenameOrUrl
+    : "/public/md/" + filenameOrUrl + ".md";
+  console.log("readmeUrl:", readmeUrl);
+  fetchOnlineMdFile(readmeUrl)
+    .then((data) => {
+      const markdownContent = data;
       const pattern = /^---([\s\S]*?)---/;
       const match = markdownContent.match(pattern);
       let updatedMarkdownContent = markdownContent;
@@ -45,17 +57,17 @@ function fillMarkdownContent(filename, online = false) {
       hljs.highlightAll();
       // 触发图片懒加载
       initObesrver();
-    }
-  };
-  // 向服务器发送请求，获取你需要的Markdown文档
-  if (online) {
-    xmlhttp.open("GET", filename, true);
-  } else {
-    xmlhttp.open("GET", "public/md/" + filename + ".md", true);
-  }
-  xmlhttp.send();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
+/**
+ * 处理md字符串
+ * @param {string} mdStr
+ * @description 将md字符串中的img标签的src属性替换为data-src属性，src属性设置为空字符串
+ */
 function solveMdStr(mdStr) {
   // 使用正则表达式匹配 <img> 标签的内容和 src 属性
   const regex = /<img[^>]+src="([^"]+)"[^>]*>/g;
@@ -68,6 +80,10 @@ function solveMdStr(mdStr) {
   return mdStr;
 }
 
+/**
+ * 初始化图片懒加载
+ * @description IntersectionObserver是浏览器内置的一个API，用于监听元素是否进入视口
+ */
 function initObesrver() {
   let imgs = document.querySelectorAll("img");
   const observer = new IntersectionObserver(
@@ -91,4 +107,20 @@ function initObesrver() {
       observer.observe(img);
     });
   }
+}
+
+function fetchOnlineMdFile(readmeUrl) {
+  return new Promise((resolve, reject) => {
+    fetch(readmeUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.text();
+      })
+      .then((data) => {
+        resolve(data);
+      })
+      .catch((error) => reject(error));
+  });
 }
