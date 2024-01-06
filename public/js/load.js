@@ -140,14 +140,14 @@ function initObesrver() {
  * @description readmeUrl为在线md文件的url,github返回的为json，其他为text
  */
 function fetchOnlineMdFile(readmeUrl) {
+  // 对GitHub的地址进行处理
+  let isGithub = readmeUrl.includes("github.com") ? true : false;
   return new Promise((resolve, reject) => {
     fetch(readmeUrl)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        // 对GitHub的地址进行处理
-        let isGithub = readmeUrl.includes("github.com") ? true : false;
         return isGithub ? response.json() : response.text();
       })
       .then((data) => {
