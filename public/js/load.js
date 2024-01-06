@@ -1,11 +1,12 @@
 // 用于解析Markdown文档
 function fillMarkdownContent(filename) {
   var xmlhttp;
-
   marked.setOptions({
     renderer: new marked.Renderer(),
     highlight: function (code, language) {
-      const validLanguage = hljs.getLanguage(language) ? language : "javascript";
+      const validLanguage = hljs.getLanguage(language)
+        ? language
+        : "javascript";
       return hljs.highlightAuto(validLanguage, code).value;
     },
     pedantic: false,
@@ -16,7 +17,6 @@ function fillMarkdownContent(filename) {
     smartypants: true,
     xhtml: false,
   });
-  
   if (window.XMLHttpRequest) {
     // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
     xmlhttp = new XMLHttpRequest();
@@ -24,7 +24,6 @@ function fillMarkdownContent(filename) {
     // IE6, IE5 浏览器执行代码
     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
   }
-
   // 得到服务器响应后，对得到的Markdown文档进行解析
   xmlhttp.onreadystatechange = function () {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -34,13 +33,11 @@ function fillMarkdownContent(filename) {
       let updatedMarkdownContent = markdownContent;
       if (match) {
         const metadataBlock = match[0];
-
         // 从原始字符串中移除匹配到的部分
         updatedMarkdownContent = markdownContent.replace(metadataBlock, "");
         console.log("截取到的 metadataBlock:", metadataBlock);
       }
       let htmlStr = marked.marked(updatedMarkdownContent);
-      console.log("updatedMarkdownContent:", updatedMarkdownContent);
       // 处理img标签
       htmlStr = solveMdStr(htmlStr);
       document.getElementById("view").innerHTML = htmlStr;
@@ -79,7 +76,6 @@ function initObesrver() {
             entry.target.src = entry.target.getAttribute("data-src");
             entry.target.removeAttribute("data-src");
             entry.target.setAttribute("data-has-lazy-src", true);
-            console.log(entry.target);
           }
         }
       });
